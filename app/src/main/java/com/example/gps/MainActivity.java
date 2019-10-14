@@ -7,35 +7,42 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.gps.Base.BaseActivity;
+import com.example.gps.Model.Note;
+import com.example.gps.dataBase.MyDataBase;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 public class MainActivity extends BaseActivity
         implements LocationListener, OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 600;
+    protected Button bottomAddMemory;
     MapView mapView;
     GoogleMap map;
     Marker userMarker;
     MyLocationProvider myLocationProvider;
     Location location;
+    List<Note> allNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.setContentView(R.layout.activity_main);
         mapView = findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         if (isLocationpermissionAllowed()) {
@@ -44,6 +51,14 @@ public class MainActivity extends BaseActivity
             requestLocationPermission();
         }
         mapView.getMapAsync(this);
+        initView();
+
+        bottomAddMemory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddNoteActivity.class));
+            }
+        });
     }
 
     @Override
@@ -61,7 +76,7 @@ public class MainActivity extends BaseActivity
 
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
 
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location)));
+        );
 
 
         map.animateCamera(CameraUpdateFactory
@@ -81,6 +96,10 @@ public class MainActivity extends BaseActivity
     protected void onStart() {
         super.onStart();
         mapView.onStart();
+        allNotes = MyDataBase.getInstance(this)
+                .notesDao()
+                .getAllNote();
+
     }
 
     @Override
@@ -198,4 +217,10 @@ public class MainActivity extends BaseActivity
             // permissions this app might request.
         }
     }
+
+    private void initView() {
+        bottomAddMemory = (Button) findViewById(R.id.bottom_add_memory);
+        mapView = (MapView) findViewById(R.id.map_view);
+    }
+
 }

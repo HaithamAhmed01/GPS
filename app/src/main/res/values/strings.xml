@@ -3,4 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="google_maps_key">AIzaSyD0l4ot6gfyEa4wRuyrAAYSt3D9yd7KZ5A</string>
     <string name="add_memory">Add Memory</string>
+    <string name="note_add_succussfully">Note Add Succussfully</string>
+    <string name="ok">Ok</string>
+    <string name="add">Add</string>
 </resources>
